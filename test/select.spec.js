@@ -1905,6 +1905,18 @@ describe('ui-select tests', function() {
 
     });
 
+    it('should select highlighted match when pressing TAB key from dropdown', function() {
+
+        scope.selection.selectedMultiple = [scope.people[5]]; //Samantha
+        var el = createUiSelectMultiple();
+        var searchInput = el.find('.ui-select-search');
+
+        triggerKeydown(searchInput, Key.Down);
+        triggerKeydown(searchInput, Key.Tab);
+        expect(scope.selection.selectedMultiple.length).toEqual(2);
+
+    });
+
     it('should stop the propagation when pressing ENTER key from dropdown', function() {
 
         var el = createUiSelectMultiple();
@@ -1930,6 +1942,55 @@ describe('ui-select tests', function() {
         triggerKeydown(searchInput, Key.Escape);
         expect(jQuery.Event.prototype.preventDefault).toHaveBeenCalled();
         expect(jQuery.Event.prototype.stopPropagation).toHaveBeenCalled();
+
+    });
+
+    it('should not stop the propagation when pressing TAB key from dropdown', function() {
+
+        var el = createUiSelectMultiple({closeOnSelect: false});
+        var searchInput = el.find('.ui-select-search');
+        spyOn(jQuery.Event.prototype, 'preventDefault');
+        spyOn(jQuery.Event.prototype, 'stopPropagation');
+
+        triggerKeydown(searchInput, Key.Tab);
+        expect(jQuery.Event.prototype.preventDefault).not.toHaveBeenCalled();
+        expect(jQuery.Event.prototype.stopPropagation).not.toHaveBeenCalled();
+
+    });
+
+    it('should stop the propagation when pressing TAB key from dropdown when control is open', function() {
+
+        var el = createUiSelectMultiple({closeOnSelect: false});
+        var searchInput = el.find('.ui-select-search');
+
+        triggerKeydown(searchInput, Key.Down);
+
+        spyOn(jQuery.Event.prototype, 'preventDefault');
+        spyOn(jQuery.Event.prototype, 'stopPropagation');
+
+        expect(isDropdownOpened(el)).toEqual(true);
+        triggerKeydown(searchInput, Key.Tab);
+        expect(jQuery.Event.prototype.preventDefault).toHaveBeenCalled();
+        expect(jQuery.Event.prototype.stopPropagation).toHaveBeenCalled();
+
+    });
+
+    it('should not stop the propagation when pressing TAB key from dropdown when control is closed', function() {
+
+        var el = createUiSelectMultiple({closeOnSelect: false});
+        var searchInput = el.find('.ui-select-search');
+
+        triggerKeydown(searchInput, Key.Down);
+        expect(isDropdownOpened(el)).toEqual(true);
+        triggerKeydown(searchInput, Key.Escape);
+        expect(isDropdownOpened(el)).toEqual(false);
+
+        spyOn(jQuery.Event.prototype, 'preventDefault');
+        spyOn(jQuery.Event.prototype, 'stopPropagation');
+
+        triggerKeydown(searchInput, Key.Tab);
+        expect(jQuery.Event.prototype.preventDefault).not.toHaveBeenCalled();
+        expect(jQuery.Event.prototype.stopPropagation).not.toHaveBeenCalled();
 
     });
 

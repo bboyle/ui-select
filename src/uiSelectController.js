@@ -554,7 +554,7 @@ uis.controller('uiSelectCtrl',
       _ensureHighlightVisible();
     }
 
-    if (key === KEY.ENTER || key === KEY.ESC) {
+    if (key === KEY.ENTER || key === KEY.ESC || (key === KEY.TAB && ctrl.multiple && ctrl.open)) {
       e.preventDefault();
       e.stopPropagation();
     }
